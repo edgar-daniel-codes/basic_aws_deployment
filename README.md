@@ -632,7 +632,7 @@ docker run -d \
 
 Se puede validar la existencia del API abierta en el siguiente [URL](http://3.141.27.56/docs)
 
-
+!["API productivo"](./figures/evidence_api.png)
 
 ### 9.- Shiny App
 
@@ -682,3 +682,4 @@ docker run -d \
 
 El despliegue en url pública se puede validar en el siguiente link de [Dashboard](http://3.141.27.56:3838). 
 
+!["Tablero productivo"](./figures/evidence_dash.png)
