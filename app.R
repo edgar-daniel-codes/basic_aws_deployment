@@ -16,15 +16,14 @@ library(shiny)
 library(shinydashboard)
 library(dplyr)
 library(readr)
-library(arrow)
 library(ggplot2)
 
 # Parametros 
 CLEAN_DATA <- "./data/clean/"
-FILE_NAME  <- "auto_mpg.feather"
+FILE_NAME  <- "auto_mpg.csv"
 
 # Cargar datos 
-df <- read_feather(paste0(CLEAN_DATA, FILE_NAME))
+df <- read_csv(paste0(CLEAN_DATA, FILE_NAME))
 
 ### ----------------------------------------------------------------------------
 ### UI

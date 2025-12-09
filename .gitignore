@@ -93,7 +93,7 @@ DerivedData/
 data/raw/**
 data/inference/**
 data/clean/**
-!data/clean/auto_mpg.feather
+!data/clean/auto_mpg.csv
 data/processed/**
 
 # Just sample data or required 

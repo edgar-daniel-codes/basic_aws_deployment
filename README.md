@@ -63,10 +63,39 @@ cat ./data/clean/headers.csv ./data/clean/auto_mpg_noheader.csv > './data/clean/
 
 ### 2. **EDA en R**
 
-El análisis presentado en esta sección de Exploración se encuentra en el archivo `eda.R`.
+El análisis presentado en esta sección de Exploración se encuentra en el archivo `eda.R`. Algunos de los resultados los presentamos en las siguientes imagenes: 
 
 
-[INCLUIR ALGUNOS RESULTADOS]
+Análisis Bivariado de las variables numericas por origen: 
+
+!["Análisis Bivariado por origen"](./figures/bivariado_por_origin.png)
+
+!["Análisis Bivariado por origen"](./figures/bivariado_por_origin.png)
+
+!["Correlación global entre variables"](./figures/correlacion_global.png)
+
+
+Análisis de distribuciones y relaciones entre las variables y la variable originales: 
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_acceleration.png)
+
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_cylinders.png)
+
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_displacement.png)
+
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_horsepower.png)
+
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_model_year.png)
+
+
+!["Aceleración"](./figures/scatter_reg_mpg_vs_weight.png)
+
+
+A partir de estos análisis decidimos que vamos a construir un Random Forest Regressor para poder predecir la varoable "mpg" en función de las otras variables numéricas y la categorica "origen". 
 
 
 ### 3.- **Formato Feather**
@@ -366,13 +395,85 @@ Para poder llevar el proyecto a la nube (AWS) se requiere primero de una configu
 
 #### Creación de rol en IAM
 
+El primer paso, es crear un rol de seguridad para los aplicativos de AWS. 
+
+Abrimos el producto de IAM. 
+!["Creación de rol en IAM - Paso 1"](./figures/iam_1.png)
+
+Creamos a una persona:
+!["Creación de rol en IAM - Paso 2"](./figures/iam_2.png)
+
+Le damos los permisos necesarios ya preconfigurados por AWS para el acceso completo a los aplicativos a utilizar: RDS, EC2, S3. 
+!["Creación de rol en IAM - Paso 3"](./figures/iam_3.png)
+
+Finalmente, creamos y descargamos nuestras claves de acceso (Poner en un folder seguro)
+!["Creación de rol en IAM - Paso 4"](./figures/iam_4.png)
 
 
 
 #### Creación de instancia en EC2 
 
+Abrimos el aplicativo de EC2: 
+!["Creación de instancia EC2 - Paso 1"](./figures/ec2_1.png)
+
+Damos click en crear una nueva instancia:
+!["Creación de instancia EC2 - Paso 2"](./figures/ec2_2.png)
+
+Seleccionamos el sistema operativo base Linux gestionado por AWS:
+!["Creación de instancia EC2 - Paso 3"](./figures/ec2_3.png)
+
+Creamos un par de llaves con las configuraciones de seguridad predefinidas: 
+!["Creación de instancia EC2 - Paso 5"](./figures/ec2_5.png)
+
+Seleccionamos las configuraciones de red mostradas en la imagen y damos click en el botón de Lanzar. 
+!["Creación de instancia EC2 - Paso 6"](./figures/ec2_6.png)
+
+Finalmente, en la lista de instancias, deberíamos de ver la instancia creada y activa, tal como en la imágen:
+!["Creación de instancia EC2 - Paso 7"](./figures/ec2_7.png)
+
+
+Al levantar la instancia y conectar con EC2, validar la presencia de librerias necesarias por medio de los siguientes comandos:
+
+```bash
+# MySQL
+sudo dnf install -y mariadb105
+
+# Git 
+sudo dnf update -y
+sudo dnf install -y git
+
+# Docker 
+sudo dnf install -y docker
+
+```
+
+
 #### Creación de Base de Datos MySQL en RDS
 
+Finalmente, configuramos la base de datos MySQL en el servicio RDS de AWS, siguiendo los siguientes pasos desde la consola de AWS:
+
+Primero, abrimos el servicio RDS:
+!["Creación de la base de datos en RDS - Paso 1"](./figures/rds_1.png)
+
+Damos click en el boton de "Crear una base de datos"
+!["Creación de la base de datos en RDS - Paso 2"](./figures/rds_2.png)
+
+Seleccionamos el motor de nuestra base de datos, en este caso MySQL. 
+!["Creación de la base de datos en RDS - Paso 3"](./figures/rds_3.png)
+
+Configuramos el tipo de producto y plantillas, en este caso utilizamos una plantilla de prueba:
+!["Creación de la base de datos en RDS - Paso 4"](./figures/rds_4.png)
+
+Configuramos tal como se muesta en las siguientes imagenes:
+!["Creación de la base de datos en RDS - Paso 5"](./figures/rds_5.png)
+
+!["Creación de la base de datos en RDS - Paso 6"](./figures/rds_6.png)
+
+Después de dar click en el botón de crear deberíamos de ver nuestro engine en la lista de bases de datos:
+!["Creación de la base de datos en RDS - Paso 7"](./figures/rds_7.png)
+
+Finalmente, configuramos nuestra base en términos de seguridad para la transmisión de datos abierta:
+!["Creación de la base de datos en RDS - Paso 8"](./figures/rds_8.png)
 
 
 Para poder utilizar la base de datos que acabamos de crear y definir la tabla de logs que se pide, primero tenemos que conectarnos a la base de datos y crear el esquema, para ello, ejecutamos los siguientes comandos en la terminal, para validar que tenemos correcto acceso a la instancia:
@@ -385,7 +486,7 @@ ssh -i "estcom25.pem" ec2-user@ec2-18-191-218-57.us-east-2.compute.amazonaws.com
 
 Una vez que nos conectamos con éxito:
 
-[Imagen de exito]
+["Conexión exitosa"](./figures/ssh_exito.png)
 
 Realizamos los siguientes comandos para conectar con nuestra base de datos en RDS
 
@@ -460,6 +561,79 @@ Cuyas indicaciones son:
   
 
 
+Consideremos en este punto dos ventanas de terminal abiertas y con conexión: terminal local en el root de este proyecto y terminal con la conexi´pon SSH a la instancia EC2 de AWS que levantamos. Para poder subir a productivo nuestro proyecto, primero es necesario clonar el repositorio que tenemos en local a la instancia de EC2, el camino que vamos a seguir y el más práctico y estándar: Local -> GitHub -> EC2. 
+
+Así, primero en la terminal en local, y una vez creado el correspondiente repositorio en GitHub, ejecutamos el siguiente push con todo nuestro proyecto (mala práctica, sólo para ejemplo ilustrativo, se tendría que estar actualizando el repo durante todo el proceso de trabajo): 
+
+``` bash 
+# Push a repo publico 
+git init 
+git add .
+git commit -m "Carga primera" 
+git branch -M main 
+git remote add origin 
+```
+
+Con el push exitoso, ahora en la terminal de nuestra instancia EC2, ejecutamos:
+
+``` bash 
+cd ~
+git clone https://github.com/edgar-daniel-codes/basic_aws_deployment.git auto-mpg
+cd auto-mpg
+``` 
+
+Finalmente, en la terminal de EC2, definimos variables de ambiente directamente (por seguridad y buenas prácticas), de la siguiente forma:
+
+``` bash
+cd ~/auto-mpg
+nano .env
+```
+
+En Nano, definimos : 
+
+```txt
+DB_HOST=db_a_conectar.xxxxxx.region.rds.amazonaws.com
+DB_USER=admin
+DB_PASS=YOUR_RDS_PASSWORD
+DB_NAME=estcom_db
+``` 
+
+Ya con esto, procedemos a levantar nuestro contenedor:
+
+```bash
+
+# Habilitamos e iniciamos docker  
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Damos permiso a Docker 
+sudo usermod -aG docker ec2-user
+
+exit
+``` 
+
+Salimos, reconectamos con SSH y procedemos: 
+
+```bash
+
+cd ~/auto-mpg
+
+# Construimos la Imagen 
+docker build -t auto-mpg-api -f Dockerfile.api .
+
+# Corremos el contenedor de API
+docker run -d \
+  -p 80:80 \
+  --env-file .env \
+  --name auto-mpg-api \
+  auto-mpg-api
+ 
+``` 
+
+Se puede validar la existencia del API abierta en el siguiente [URL](http://3.141.27.56/docs)
+
+
+
 ### 9.- Shiny App
 
 En el archivo `app.R` tenemos lel código necesario para desplegar un dashboard basado en web por medio de ayuda de la librería shiny de R, que nos permite diseñar y desplegar visualizaciones interactivas y disponibilizarlas en un servidor local para pruebas o en el puerto de una instancia para acceso público desde cualquier IP. 
@@ -472,6 +646,9 @@ Para su despliegue productivo, ya en esta instancia, es importante mencionar que
 ```dockerfile
 # Imagen con requerimientos para Shiny apps 
 FROM rocker/shiny:latest
+
+# Instalamos dependencias 
+RUN R -e "install.packages(c('shinydashboard', 'dplyr', 'readr', 'arrow'), repos = 'https://cloud.r-project.org')"
 
 # Trabajamos en el default de Shiny Server 
 WORKDIR /srv/shiny-server
@@ -486,3 +663,22 @@ EXPOSE 3838
 # No hay necesidad de sobre escribir CMD 
 
 ```
+El proceso es completamente simialr al efectuado para el levantamiento de la API, sólo que utilizando el conteneder anteriormente definido, asumiendo la conexión con SSH a la instancia de EC2 : 
+
+```bash
+
+cd ~/auto-mpg
+
+# Construimos la Imagen 
+docker build -t auto-mpg-shiny -f Dockerfile.app .
+
+# Corremos el contenedor de la Shiny App
+docker run -d \
+  -p 3838:3838 \
+  --name auto-mpg-shiny \
+  auto-mpg-shiny
+ 
+``` 
+
+El despliegue en url pública se puede validar en el siguiente link de [Dashboard](http://3.141.27.56:3838). 
+

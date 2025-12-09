@@ -34,6 +34,7 @@ PREP_DATA = "./data/prep/"
 CLEAN_DATA = "./data/clean/"
 
 FILE_NAME = "auto_mpg.feather"
+FILE_NAME_2 = "auto_mpg.csv"
 
 MODEL_PATH = './models/random_forest_pipeline.pkl'
 MODEL_COLS_PATH = './models/model_columns.pkl'
@@ -50,6 +51,7 @@ DROP_VARS = ["car_name"]
 
 # Leemos la base de Datos 
 df = pd.read_feather(CLEAN_DATA + FILE_NAME)
+df.to_csv(CLEAN_DATA + FILE_NAME_2, index = False)
 
 data_encoded = pd.get_dummies(df, columns=['origin'], drop_first=True)
 
