@@ -2,7 +2,7 @@
 FROM rocker/shiny:latest
 
 # Instalamos dependencias 
-RUN R -e "install.packages(c('shinydashboard', 'dplyr', 'readr'), repos = 'https://cloud.r-project.org')"
+RUN R -e "install.packages(c('shinydashboard', 'dplyr', 'readr', 'ggplot2'), repos = 'https://cloud.r-project.org')"
 
 # Trabajamos en el default de Shiny Server 
 WORKDIR /srv/shiny-server
