@@ -7,8 +7,10 @@ RUN R -e "install.packages(c('shinydashboard', 'dplyr', 'readr'), repos = 'https
 # Trabajamos en el default de Shiny Server 
 WORKDIR /srv/shiny-server
 
-# Hacemos una copia de la app donde se espera por default 
+# Hacemos una copia de la app y los datos necesarios donde se espera por default 
 COPY app.R /srv/shiny-server/app.R
+COPY data /srv/shiny-server/data
+
 
 # Exponemos el puerto 3838
 EXPOSE 3838
